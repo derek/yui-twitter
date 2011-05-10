@@ -1,0 +1,31 @@
+<html>
+<script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui-min.js"></script>
+<script type="text/javascript">
+    
+    YUI({
+        combine: true,
+        modules: {
+            'Twitter': {
+                fullpath: '../js/yui-twitter.js',
+                requires: ['yql']
+            }
+        }
+    }).use('Twitter', function (Y) {
+        
+        twitter = new Y.Twitter();
+        
+        twitter.search("lakers", function(tweets){
+            Y.each(tweets, function(t){
+                console.log(t.from_user + ": " + t.text);
+            });
+        });
+        
+        twitter.user.timeline("derek", function(tweets){
+            console.log(tweets)
+        });
+        
+    });
+    
+</script>
+
+</html>
