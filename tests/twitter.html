@@ -12,7 +12,7 @@
         }
     }).use('Twitter', function (Y) {
         
-        twitter = new Y.Twitter();
+        var twitter = new Y.Twitter();
         
         twitter.search("lakers", function(tweets){
             Y.each(tweets, function(t){
