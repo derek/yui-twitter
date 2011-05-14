@@ -22,9 +22,12 @@
         });
 
         twitter.search("#kcroyals", function(tweets){}).search("#kcchiefs", function(tweets){});
+        twitter.friends(function(tweets){});
         twitter.user_timeline("derek", function(tweets){});
         twitter.user_mentions("derek", function(tweets){});
-        twitter.friends(function(tweets){});
+        twitter.user_lists("derek", function(tweets){});
+        twitter.user_list_subscriptions("derek", function(tweets){});
+        //twitter.user_favorites(function(tweets){});
          
     });
     
