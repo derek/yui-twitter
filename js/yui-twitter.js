@@ -1,7 +1,10 @@
 YUI.add("Twitter", function(Y){
     
     var Twitter = function(config){
+        config = config || false;
+
         this.oauth = false;
+
         if (config.oauth_token && config.oauth_token_secret && config.oauth_consumer_key && config.oauth_consumer_secret) {
             this.oauth = {
                 oauth_token           : config.oauth_token,
@@ -18,10 +21,9 @@ YUI.add("Twitter", function(Y){
 
     // ******* Public
     Twitter.prototype.search = function(searchQuery, callback) {
-        
         var yqlQuery = 'SELECT * FROM twitter.search WHERE q = @query';
         this._execYql(yqlQuery, function(r){
-            callback(r.results.results);
+            if (callback) callback(r.results.results);
         }, {query: searchQuery});
 
         return this;
@@ -31,7 +33,7 @@ YUI.add("Twitter", function(Y){
 
         var yqlQuery = 'SELECT * FROM twitter.status.timeline.friends WHERE oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
         this._execYql(yqlQuery, function(r){
-            callback(r);
+            if (callback) callback(r);
         }, {}, true);
 
         return this;
@@ -41,7 +43,7 @@ YUI.add("Twitter", function(Y){
         
         var yqlQuery = 'SELECT * FROM twitter.user.timeline WHERE screen_name = @screen_name';
         this._execYql(yqlQuery, function(r){
-            callback(r.results.statuses.status)
+            if (callback) callback(r.results.statuses.status)
         }, {screen_name: userName});
 
         return this;
@@ -59,7 +61,7 @@ YUI.add("Twitter", function(Y){
         
         var yqlQuery = 'SELECT * FROM twitter.favorites WHERE oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
         this._execYql(yqlQuery, function(r){
-            callback(r.results) // Fix path
+            if (callback) callback(r.results) // Fix path
         }, {}, true);
 
         return this;
@@ -68,7 +70,7 @@ YUI.add("Twitter", function(Y){
     Twitter.prototype.user_lists = function(username, callback) {
         var yqlQuery = 'SELECT * FROM twitter.lists WHERE user = @user oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
         this._execYql(yqlQuery, function(r){
-            callback(r.results) // Fix path
+            if (callback) callback(r.results) // Fix path
         }, {user:username}, true);
 
         return this;
@@ -78,7 +80,7 @@ YUI.add("Twitter", function(Y){
         
         var yqlQuery = 'SELECT * FROM twitter.lists.subscriptions WHERE user = @user AND oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
         this._execYql(yqlQuery, function(r){
-            callback(r.results) // Fix path
+            if (callback) callback(r.results) // Fix path
         }, {user:username}, true);
 
         return this;
