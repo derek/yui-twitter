@@ -1,25 +1,26 @@
 YUI.add("Twitter", function(Y){
     
     var Twitter = function(config){
-        config = config || false;
-
-        this.oauth = false;
+        var config = config || false,
+            oauth = false;
 
         if (config.oauth_token && config.oauth_token_secret && config.oauth_consumer_key && config.oauth_consumer_secret) {
-            this.oauth = {
+            oauth = {
                 oauth_token           : config.oauth_token,
                 oauth_token_secret    : config.oauth_token_secret,
                 oauth_consumer_key    : config.oauth_consumer_key,
                 oauth_consumer_secret : config.oauth_consumer_secret
             };
         }
+        
+        this.oauth = oauth;
     };
 
     Twitter.prototype = {
         
     }
 
-    // ******* Public
+// ******* Public
     Twitter.prototype.search = function(searchQuery, callback) {
         var yqlQuery = 'SELECT * FROM twitter.search WHERE q = @query';
         this._execYql(yqlQuery, function(r){
@@ -61,16 +62,17 @@ YUI.add("Twitter", function(Y){
         
         var yqlQuery = 'SELECT * FROM twitter.favorites WHERE oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
         this._execYql(yqlQuery, function(r){
-            if (callback) callback(r.results) // Fix path
+            if (callback) callback(r.results) // TODO: Fix path
         }, {}, true);
 
         return this;
     }
 
     Twitter.prototype.user_lists = function(username, callback) {
-        var yqlQuery = 'SELECT * FROM twitter.lists WHERE user = @user oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
+        
+        var yqlQuery = 'SELECT * FROM twitter.lists WHERE user = @user AND oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
         this._execYql(yqlQuery, function(r){
-            if (callback) callback(r.results) // Fix path
+            if (callback) callback(r.results) // TODO: Fix path
         }, {user:username}, true);
 
         return this;
@@ -80,17 +82,37 @@ YUI.add("Twitter", function(Y){
         
         var yqlQuery = 'SELECT * FROM twitter.lists.subscriptions WHERE user = @user AND oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
         this._execYql(yqlQuery, function(r){
-            if (callback) callback(r.results) // Fix path
+            if (callback) callback(r.results) // TODO: Fix path
         }, {user:username}, true);
+
+        return this;
+    }
+
+    Twitter.prototype.direct_messages_in = function(callback) {
+        
+        var yqlQuery = 'SELECT * FROM twitter.directmessages WHERE oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
+        this._execYql(yqlQuery, function(r){
+            if (callback) callback(r.results) // TODO: Fix path
+        }, {}, true);
+
+        return this;
+    }
+
+    Twitter.prototype.direct_messages_out = function(callback) {
+        
+        var yqlQuery = 'SELECT * FROM twitter.directmessages.sent WHERE oauth_token = @oauth_token AND oauth_token_secret = @oauth_token_secret AND oauth_consumer_key = @oauth_consumer_key AND oauth_consumer_secret = @oauth_consumer_secret';
+        this._execYql(yqlQuery, function(r){
+            if (callback) callback(r.results) // TODO: Fix path
+        }, {}, true);
 
         return this;
     }
 
 // ******* Private
     Twitter.prototype._execYql = function(query, callback, params, authenticated) {
-        var query         = query || false,
-            callback      = callback || function(){},
-            params        = params || {},
+        var query         = query         || false,
+            callback      = callback      || function(){},
+            params        = params        || {},
             authenticated = authenticated || false;
         
         if (!query) {
