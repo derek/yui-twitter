@@ -21,12 +21,19 @@
             oauth_consumer_secret : 'YOUR VALUE'
         });
         
-        twitter.search("#kcroyals", function(tweets){}).search("#kcchiefs", function(tweets){});
-        twitter.friends(function(tweets){});
-        twitter.user_timeline("derek", function(tweets){});
-        twitter.user_mentions("derek", function(tweets){});
-        twitter.user_lists("derek", function(tweets){});
-        twitter.user_list_subscriptions("derek", function(tweets){});
+        
+        //twitter.search("#kcroyals", function(tweets){Y.log(tweets.length)}).search("#kcchiefs", function(tweets){Y.log(tweets.length)});
+        
+        //twitter.friends(function(tweets){Y.log(tweets.length)});
+        
+        twitter.user_timeline("derek", {}, function(tweets){Y.log(tweets.length)});
+        //twitter.user_timeline("derek", {since_id: 69110347386208257}, function(tweets){Y.log(tweets.length)});
+        
+        //twitter.user_mentions(function(tweets){Y.log(tweets.length)});
+        //twitter.user_lists("derek", function(lists){Y.log(lists.length)});
+        //twitter.user_list_subscriptions("derek", function(lists){Y.log(lists.length)});
+        //twitter.direct_messages_in(function(tweets){Y.log(tweets.length)});
+        //twitter.direct_messages_out(function(tweets){Y.log(tweets.length)});
         //twitter.user_favorites(function(tweets){});
         
     });
