@@ -104,6 +104,23 @@ YUI.add("Twitter", function(Y){
         }, params, false);
     }
 
+    Twitter.prototype.profile = function(user, callback) {
+        var  params   = {},
+             query    = false,
+             where    = [];
+        
+        if (Y.Lang.isNumber(user)) { params.id = user; }
+        if (Y.Lang.isString(user)) { params.screen_name = user; }
+        
+        query = 'SELECT * FROM twitter.users WHERE ';
+        for (key in params) { where.push(key + " = @" + key); }
+        query += where.join(" AND ");
+        
+        this._execYql(query, function(r){
+            if (callback) callback(r.results.user)
+        }, params, false);
+    }
+
     Twitter.prototype.trends = function(callback) {
         
         // Current table is borked

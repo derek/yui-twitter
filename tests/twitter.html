@@ -13,19 +13,19 @@
              }
          }
     }).use('Twitter', function (Y) {
-        
+
         var twitter = new Y.Twitter({
             oauth_token           : 'YOUR VALUE',
             oauth_token_secret    : 'YOUR VALUE',
             oauth_consumer_key    : 'YOUR VALUE',
             oauth_consumer_secret : 'YOUR VALUE'
         });
-        
+
         twitter.trends(function(trends){ Y.log("twitter.trends: " + trends.length); });
-        twitter.followers("derek", function(ids){ Y.log("twitter.followers: " + ids.length); })
-        twitter.friendship("derek", "yuilibrary", function(info){ console.dir(info); });
+        twitter.friendship("derek", "yuilibrary", function(info){ Y.log("twitter.friendship: " + info.source.screen_name); });
         twitter.search("#kcroyals", function(tweets){ Y.log("twitter.search: " + tweets.length); });
-        twitter.friends(function(tweets){ Y.log("twitter.friends: " + tweets.length); });
+        twitter.followers("derek", function(ids){ Y.log("twitter.followers: " + ids.length); })
+        twitter.friends(function(ids){ Y.log("twitter.friends: " + ids.length); });
         twitter.user_timeline("derek", {}, function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
         twitter.user_timeline("derek", {since_id: 69110347386208257}, function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
         twitter.user_mentions(function(tweets){ Y.log("twitter.mentions: " + tweets.length); });
@@ -34,7 +34,9 @@
         twitter.direct_messages_in(function(tweets){ Y.log("twitter.direct_messages_in: " + tweets.length); });
         twitter.direct_messages_out(function(tweets){ Y.log("twitter.direct_messages_out: " + tweets.length); });
         twitter.user_favorites("derek", function(tweets){ Y.log("twitter.user_favorites: " + tweets.length); });
-        twitter.ratelimit(function(stats){ Y.log(stats); });
+        twitter.ratelimit(function(stats){ Y.log("twitter.ratelimit: " + stats['remaining-hits'].content)});
+        twitter.profile("derek", function(user){ Y.log("twitter.profile: " + user.id); });
+
     });
     
 </script>
