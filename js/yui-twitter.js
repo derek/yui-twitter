@@ -142,6 +142,13 @@ YUI.add("Twitter", function(Y){
             if (callback) callback(r.results.hash)
         }, {}, true);
     }
+    
+    Twitter.prototype.update_status = function(status, callback) {
+        var altDatatable = 'USE "http://derek.io/~/yql-tables/twitter/twitter.status.xml" as post_twitter_status;';
+        this._execYql(altDatatable + 'UPDATE post_twitter_status SET status=@status WHERE ' + this._oauth_to_where(), function(r){
+            if (callback) callback(r.results.hash)
+        }, {status: status}, false);
+    }
 
 
 // ******* Private
@@ -170,6 +177,15 @@ YUI.add("Twitter", function(Y){
             if(callback) callback(response.query);
         }, params, {proto: "https"});
     }
+
+    Twitter.prototype._oauth_to_where = function() {
+        var where = [];
+        for (key in this.oauth) {
+            where.push(key + "='" + this.oauth[key] + "'");
+        }
+        return where.join(" AND ");
+    }
+
     
     Y.Twitter = function(config) {
         return new Twitter(config);

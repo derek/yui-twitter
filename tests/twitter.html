@@ -20,7 +20,7 @@
             oauth_consumer_key    : 'YOUR VALUE',
             oauth_consumer_secret : 'YOUR VALUE'
         });
-
+        
         twitter.trends(function(trends){ Y.log("twitter.trends: " + trends.length); });
         twitter.friendship("derek", "yuilibrary", function(info){ Y.log("twitter.friendship: " + info.source.screen_name); });
         twitter.search("#kcroyals", function(tweets){ Y.log("twitter.search: " + tweets.length); });
