@@ -21,22 +21,20 @@
             oauth_consumer_secret : 'YOUR VALUE'
         });
         
-        twitter.followers("derek", function(ids){Y.log("User has " + ids.length + " followers");})
-        twitter.friendship("derek", "asd", function(info){ console.dir(info); });
-        //twitter.search("#kcroyals", function(tweets){Y.log(tweets.length)}).search("#kcchiefs", function(tweets){Y.log(tweets.length)});
-        
-        //twitter.friends(function(tweets){Y.log(tweets.length)});
-        
-        //twitter.user_timeline("derek", {}, function(tweets){Y.log(tweets.length)});
-        //twitter.user_timeline("derek", {since_id: 69110347386208257}, function(tweets){Y.log(tweets.length)});
-        
-        //twitter.user_mentions(function(tweets){Y.log(tweets.length)});
-        //twitter.user_lists("derek", function(lists){Y.log(lists.length)});
-        //twitter.user_list_subscriptions("derek", function(lists){Y.log(lists.length)});
-        //twitter.direct_messages_in(function(tweets){Y.log(tweets.length)});
-        //twitter.direct_messages_out(function(tweets){Y.log(tweets.length)});
-        //twitter.user_favorites(function(tweets){});
-        
+        twitter.trends(function(trends){ Y.log("twitter.trends: " + trends.length); });
+        twitter.followers("derek", function(ids){ Y.log("twitter.followers: " + ids.length); })
+        twitter.friendship("derek", "yuilibrary", function(info){ console.dir(info); });
+        twitter.search("#kcroyals", function(tweets){ Y.log("twitter.search: " + tweets.length); });
+        twitter.friends(function(tweets){ Y.log("twitter.friends: " + tweets.length); });
+        twitter.user_timeline("derek", {}, function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
+        twitter.user_timeline("derek", {since_id: 69110347386208257}, function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
+        twitter.user_mentions(function(tweets){ Y.log("twitter.mentions: " + tweets.length); });
+        twitter.user_lists("derek", function(lists){ Y.log("twitter.lists: " + lists.length); });
+        twitter.user_list_subscriptions("derek", function(lists){ Y.log("twitter.list_subscriptions: " + lists.length); });
+        twitter.direct_messages_in(function(tweets){ Y.log("twitter.direct_messages_in: " + tweets.length); });
+        twitter.direct_messages_out(function(tweets){ Y.log("twitter.direct_messages_out: " + tweets.length); });
+        twitter.user_favorites("derek", function(tweets){ Y.log("twitter.user_favorites: " + tweets.length); });
+        twitter.ratelimit(function(stats){ Y.log(stats); });
     });
     
 </script>
