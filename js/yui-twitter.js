@@ -90,10 +90,10 @@ YUI.add("Twitter", function(Y){
              query    = false,
              where    = [];
         
-        if (Y.Lang.isNumber(source)) { params.source_id = source; }
-        if (Y.Lang.isString(source)) { params.source_screen_name = source; }
-        if (Y.Lang.isNumber(target)) { params.target_id = target; }
-        if (Y.Lang.isString(target)) { params.target_screen_name = target; }
+        if (Y.Lang.isNumber(+source)) { params.source_id = source; }
+        else if (Y.Lang.isString(source)) { params.source_screen_name = source; }
+        if (Y.Lang.isNumber(+target)) { params.target_id = target; }
+        else if (Y.Lang.isString(target)) { params.target_screen_name = target; }
         
         query = 'SELECT * FROM twitter.friendships WHERE ';
         for (key in params) { where.push(key + " = @" + key); }
@@ -109,8 +109,8 @@ YUI.add("Twitter", function(Y){
              query    = false,
              where    = [];
         
-        if (Y.Lang.isNumber(user)) { params.id = user; }
-        if (Y.Lang.isString(user)) { params.screen_name = user; }
+        if (Y.Lang.isNumber(+user)) { params.id = user; }
+        else if (Y.Lang.isString(user)) { params.screen_name = user; }
         
         query = 'SELECT * FROM twitter.users WHERE ';
         for (key in params) { where.push(key + " = @" + key); }

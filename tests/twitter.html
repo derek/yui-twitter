@@ -35,7 +35,7 @@
         twitter.direct_messages_out(function(tweets){ Y.log("twitter.direct_messages_out: " + tweets.length); });
         twitter.user_favorites("derek", function(tweets){ Y.log("twitter.user_favorites: " + tweets.length); });
         twitter.ratelimit(function(stats){ Y.log("twitter.ratelimit: " + stats['remaining-hits'].content)});
-        twitter.profile("derek", function(user){ Y.log("twitter.profile: " + user.id); });
+        twitter.profile("1974", function(user){ Y.log("twitter.profile: " + user.id); });
 
     });
     
