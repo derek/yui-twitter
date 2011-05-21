@@ -26,7 +26,7 @@ YUI.add("Twitter", function(Y){
         }, {searchQuery: searchQuery});
     }
 
-    Twitter.prototype.friends = function(callback) {
+    Twitter.prototype.friends_timeline = function(callback) {
         this._execYql('SELECT * FROM twitter.status.timeline.friends', function(r){
             if (callback) callback(r.results.statuses.status)
         }, {}, true);
@@ -81,6 +81,12 @@ YUI.add("Twitter", function(Y){
 
     Twitter.prototype.followers = function(username, callback) {
         this._execYql('SELECT * FROM twitter.followers WHERE id = @id', function(r){
+            if (callback) callback(r.results.ids.id)
+        }, {id:username}, false);
+    }
+
+    Twitter.prototype.following = function(username, callback) {
+        this._execYql('SELECT * FROM twitter.friends WHERE id = @id', function(r){
             if (callback) callback(r.results.ids.id)
         }, {id:username}, false);
     }

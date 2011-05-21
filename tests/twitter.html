@@ -24,8 +24,9 @@
         twitter.trends(function(trends){ Y.log("twitter.trends: " + trends.length); });
         twitter.friendship("derek", "yuilibrary", function(info){ Y.log("twitter.friendship: " + info.source.screen_name); });
         twitter.search("#kcroyals", function(tweets){ Y.log("twitter.search: " + tweets.length); });
+        twitter.following("derek", function(ids){ Y.log("twitter.following: " + ids.length); })
         twitter.followers("derek", function(ids){ Y.log("twitter.followers: " + ids.length); })
-        twitter.friends(function(ids){ Y.log("twitter.friends: " + ids.length); });
+        twitter.friends_timeline(function(ids){ Y.log("twitter.friends: " + ids.length); });
         twitter.user_timeline("derek", {}, function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
         twitter.user_timeline("derek", {since_id: 69110347386208257}, function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
         twitter.user_mentions(function(tweets){ Y.log("twitter.mentions: " + tweets.length); });
