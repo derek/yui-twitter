@@ -21,12 +21,13 @@
             oauth_consumer_secret : 'YOUR VALUE'
         });
         
-        
+        twitter.followers("derek", function(ids){Y.log("User has " + ids.length + " followers");})
+        twitter.friendship("derek", "asd", function(info){ console.dir(info); });
         //twitter.search("#kcroyals", function(tweets){Y.log(tweets.length)}).search("#kcchiefs", function(tweets){Y.log(tweets.length)});
         
         //twitter.friends(function(tweets){Y.log(tweets.length)});
         
-        twitter.user_timeline("derek", {}, function(tweets){Y.log(tweets.length)});
+        //twitter.user_timeline("derek", {}, function(tweets){Y.log(tweets.length)});
         //twitter.user_timeline("derek", {since_id: 69110347386208257}, function(tweets){Y.log(tweets.length)});
         
         //twitter.user_mentions(function(tweets){Y.log(tweets.length)});

@@ -99,6 +99,31 @@ YUI.add("Twitter", function(Y){
         return this;
     }
 
+    Twitter.prototype.followers = function(username, callback) {
+        this._execYql('twitter.followers', function(r){
+            if (callback) callback(r.results.ids.id)
+        }, {id:username}, false);
+        
+        return this;
+    }
+
+    Twitter.prototype.friendship = function(source, target, callback) {
+        var  params = {},
+             isNumber = Y.Lang.isNumber,
+             isString = Y.Lang.isString;
+        
+        if (isNumber(source)) { params.source_id = source; }
+        if (isString(source)) { params.source_screen_name = source; }
+        if (isNumber(target)) { params.target_id = target; }
+        if (isString(target)) { params.target_screen_name = target; }
+        
+        this._execYql('twitter.friendships', function(r){
+            if (callback) callback(r.results.relationship)
+        }, params, false);
+        
+        return this;
+    }
+
 
 // ******* Private
     Twitter.prototype._execYql = function(datatable, callback, params, authenticated) {
@@ -129,7 +154,7 @@ YUI.add("Twitter", function(Y){
         //Y.log(query);
         
         new Y.YQL(query, function(response){
-            callback(response.query);
+            if(callback) callback(response.query);
         }, params, {proto: "https"});
     }
     
