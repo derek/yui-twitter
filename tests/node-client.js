@@ -31,6 +31,7 @@ YUI({
     */
     
     twitter.friends_timeline(function(tweets){
+        console.dir(tweets);
         Y.each(tweets, function (tweet) {
            time_split = tweet.created_at.split(" ");
            createdAgo = relative_time( Date.parse(time_split[1] + " " + time_split[2] + ", " + time_split[5] + " " + time_split[3]) );

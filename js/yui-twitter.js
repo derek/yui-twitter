@@ -17,16 +17,20 @@ YUI.add("Twitter", function(Y){
         this.oauth = oauth;
     };
     
-    function where(params) {
-        
-        if (!params) return '';
+    function whereString(params) {
         
         var wheres = [];
         Y.each(params, function(value, key, a){
-            wheres.push(key + "=" + "'" + value + "'");
+            wheres.push(key + "=@" + key);
         })
         
-        return " WHERE " + wheres.join(" AND ");
+        if (wheres.length > 0) {
+            return " WHERE " + wheres.join(" AND ");
+        }
+        else {
+            return '';
+        }
+        
     }
     
     function normalize(tweets) {
@@ -40,136 +44,143 @@ YUI.add("Twitter", function(Y){
     }
 
 // ******* Public
-    Twitter.prototype.search = function(searchQuery, callback, params) {
+    Twitter.prototype.search = function(searchQuery, callback, where) {
         // Defaults
-        params = params || {};
+        where = where || {};
         
-        if (params.count) {
-            params.rpp = params.count; //rename from 'rpp' to 'count', as most other API methods use that instead.  Silly twitter search.
-            delete params.count;
+        if (where.count) {
+            where.rpp = where.count; //rename from 'rpp' to 'count', as most other API methods use that instead.  Silly twitter search.
+            delete where.count;
         }
-        params.q = searchQuery;
+        where.q = searchQuery;
         
-        this._execYql('SELECT * FROM twitter.search' + where(params), function(r){
+        this._execYql('SELECT * FROM twitter.search' + whereString(where), function(r){
             var tweets = normalize(r.results.results);
             callback(tweets);
-        }, params, false);
+        }, where, false);
     }
 
-    Twitter.prototype.friends_timeline = function(callback, params) {
-        this._execYql('SELECT * FROM twitter.status.timeline.friends' + where(params), function(r){
+    Twitter.prototype.friends_timeline = function(callback, where) {
+        this._execYql('SELECT * FROM twitter.status.timeline.friends' + whereString(where), function(r){
             var tweets = normalize(r.results.statuses.status);
             callback(tweets);
-        }, params, true);
+        }, where, true);
     }
 
-    Twitter.prototype.user_timeline = function(user, callback, params) {
-        params = params || {};
-        params.id = user;
-        params.since_id = params.since_id || 1;
+    Twitter.prototype.user_timeline = function(user, callback, where) {
+        where = where || {};
+        where.id = user;
+        where.since_id = where.since_id || 1;
 
-        this._execYql('SELECT * FROM twitter.status.timeline.user' + where(params), function(r){
+        this._execYql('SELECT * FROM twitter.status.timeline.user' + whereString(where), function(r){
             var tweets = normalize(r.results.statuses.status);
             callback(tweets);
-        }, params, true);
+        }, where, true);
     }
 
-    Twitter.prototype.user_mentions = function(callback) {
-        this._execYql('SELECT * FROM twitter.status.mentions', function(r){
+    Twitter.prototype.user_mentions = function(callback, where) {
+        where = where || {};
+        whereString(where);return false;
+        this._execYql('SELECT * FROM twitter.status.mentions' + whereString(where), function(r){
             callback(r.results.statuses.status)
-        }, {}, true);
+        }, where, true);
     }
 
-    Twitter.prototype.user_favorites = function(username, callback) {
-        this._execYql('SELECT * FROM twitter.favorites WHERE id=@user', function(r){
+    Twitter.prototype.user_favorites = function(username, callback, where) {
+        where = where || {};
+        where.id = username;
+        
+        this._execYql('SELECT * FROM twitter.favorites' + whereString(where), function(r){
             callback(r.results.statuses.status)
-        }, {user:username}, true);
+        }, where, true);
     }
 
-    Twitter.prototype.user_lists = function(username, callback) {
-        this._execYql('SELECT * FROM twitter.lists WHERE user=@user', function(r){
+    Twitter.prototype.user_lists = function(username, callback, where) {
+        where = where || {};
+        where.user = username;
+        
+        this._execYql('SELECT * FROM twitter.lists' + whereString(where), function(r){
             callback(r.results.lists_list.lists.list);
-        }, {user:username}, true);
+        }, where, true);
     }
 
-    Twitter.prototype.user_list_subscriptions = function(username, callback) {
-        this._execYql('SELECT * FROM twitter.lists.subscriptions WHERE user=@user', function(r){
+    Twitter.prototype.user_list_subscriptions = function(username, callback, where) {
+        where = where || {};
+        where.user = username;
+        
+        this._execYql('SELECT * FROM twitter.lists.subscriptions' + whereString(where), function(r){
             callback(r.results.lists_list.lists.list);
-        }, {user:username}, true);
+        }, where, true);
     }
 
-    Twitter.prototype.direct_messages_in = function(callback) {
-        this._execYql('SELECT * FROM twitter.directmessages', function(r){
+    Twitter.prototype.direct_messages_in = function(callback, where) {
+        this._execYql('SELECT * FROM twitter.directmessages' + whereString(where), function(r){
             callback(r.results['direct-messages']['direct_message'])
-        }, {}, true);
+        }, where, true);
     }
 
-    Twitter.prototype.direct_messages_out = function(callback) {
-        this._execYql('SELECT * FROM twitter.directmessages.sent', function(r){
+    Twitter.prototype.direct_messages_out = function(callback, where) {
+        this._execYql('SELECT * FROM twitter.directmessages.sent' + whereString(where), function(r){
             callback(r.results['direct-messages']['direct_message'])
-        }, {}, true);
+        }, where, true);
     }
 
-    Twitter.prototype.followers = function(username, callback) {
-        this._execYql('SELECT * FROM twitter.followers WHERE id = @id', function(r){
+    Twitter.prototype.followers = function(username, callback, where) {
+        where = where || {};
+        where.id = username;
+        
+        this._execYql('SELECT * FROM twitter.followers' + whereString(where), function(r){
             callback(r.results.ids.id)
-        }, {id:username}, false);
+        }, where, false);
     }
 
-    Twitter.prototype.following = function(username, callback) {
-        this._execYql('SELECT * FROM twitter.friends WHERE id = @id', function(r){
+    Twitter.prototype.following = function(username, callback, where) {
+        where = where || {};
+        where.id = username;
+    
+        this._execYql('SELECT * FROM twitter.friends' + whereString(where), function(r){
             callback(r.results.ids.id)
-        }, {id:username}, false);
+        }, where, false);
     }
 
-    Twitter.prototype.friendship = function(source, target, callback) {
-        var  params   = {},
-             query    = false,
-             where    = [];
+    Twitter.prototype.friendship = function(source, target, callback, where) {
+        var  where = {},
+             query = false;
         
-        if (Y.Lang.isNumber(+source)) { params.source_id = source; }
-        else if (Y.Lang.isString(source)) { params.source_screen_name = source; }
-        if (Y.Lang.isNumber(+target)) { params.target_id = target; }
-        else if (Y.Lang.isString(target)) { params.target_screen_name = target; }
+        if (Y.Lang.isNumber(+source)) { where.source_id = source; }
+        else if (Y.Lang.isString(source)) { where.source_screen_name = source; }
+        if (Y.Lang.isNumber(+target)) { where.target_id = target; }
+        else if (Y.Lang.isString(target)) { where.target_screen_name = target; }
         
-        query = 'SELECT * FROM twitter.friendships WHERE ';
-        for (key in params) { where.push(key + " = @" + key); }
-        query += where.join(" AND ");
-        
-        this._execYql(query, function(r){
+        this._execYql('SELECT * FROM twitter.friendships' + whereString(where), function(r){
             callback(r.results.relationship)
-        }, params, false);
+        }, where, false);
     }
 
-    Twitter.prototype.profile = function(user, callback) {
-        var  params   = {},
-             query    = false,
-             where    = [];
+    Twitter.prototype.profile = function(user, callback, where) {
+        var  where = {},
+             query = false;
         
-        if (Y.Lang.isNumber(+user)) { params.id = user; }
-        else if (Y.Lang.isString(user)) { params.screen_name = user; }
+        if (Y.Lang.isNumber(+user)) { where.id = user; }
+        else if (Y.Lang.isString(user)) { where.screen_name = user; }
         
-        query = 'SELECT * FROM twitter.users WHERE ';
-        for (key in params) { where.push(key + " = @" + key); }
-        query += where.join(" AND ");
-        
-        this._execYql(query, function(r){
+        this._execYql('SELECT * FROM twitter.users' + whereString(where), function(r){
             callback(r.results.user)
-        }, params, false);
+        }, where, false);
     }
 
-    Twitter.prototype.trends = function(callback) {
+    Twitter.prototype.trends = function(callback, where) {
         
         // Current table is borked
         var altDatatable = 'USE "http://derek.io/~/yql-tables/twitter/twitter.trends.xml" as twitter.trends;';
 
-        this._execYql(altDatatable + 'SELECT * FROM twitter.trends', function(r){
+        this._execYql(altDatatable + 'SELECT * FROM twitter.trends' + whereString(where), function(r){
             callback(r.results.trends)
         }, {}, false);
     }
 
-    Twitter.prototype.ratelimit = function(callback) {
-        this._execYql('SELECT * FROM twitter.account.ratelimit', function(r){
+    Twitter.prototype.ratelimit = function(callback, where) {
+        this._execYql('SELECT * FROM twitter.account.ratelimit' + whereString(where), function(r){
             callback(r.results.hash)
         }, {}, true);
     }
