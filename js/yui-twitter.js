@@ -16,78 +16,109 @@ YUI.add("Twitter", function(Y){
         
         this.oauth = oauth;
     };
-
+    
+    function where(params) {
+        
+        if (!params) return '';
+        
+        var wheres = [];
+        Y.each(params, function(value, key, a){
+            wheres.push(key + "=" + "'" + value + "'");
+        })
+        
+        return " WHERE " + wheres.join(" AND ");
+    }
+    
+    function normalize(tweets) {
+        
+        //normalize it as an array if YQL only gives us an object back
+        if (!Y.Lang.isArray(tweets)) {
+            tweets = [tweets];
+        }
+        
+        return tweets;
+    }
 
 // ******* Public
-    Twitter.prototype.search = function(searchQuery, callback) {
-        var yqlQuery = 'SELECT * FROM twitter.search WHERE q=@searchQuery';
-        this._execYql(yqlQuery, function(r){
-            if (callback) callback(r.results.results);
-        }, {searchQuery: searchQuery});
+    Twitter.prototype.search = function(searchQuery, callback, params) {
+        // Defaults
+        params = params || {};
+        
+        if (params.count) {
+            params.rpp = params.count; //rename from 'rpp' to 'count', as most other API methods use that instead.  Silly twitter search.
+            delete params.count;
+        }
+        params.q = searchQuery;
+        
+        this._execYql('SELECT * FROM twitter.search' + where(params), function(r){
+            var tweets = normalize(r.results.results);
+            callback(tweets);
+        }, params, false);
     }
 
-    Twitter.prototype.friends_timeline = function(callback) {
-        this._execYql('SELECT * FROM twitter.status.timeline.friends', function(r){
-            if (callback) callback(r.results.statuses.status)
-        }, {}, true);
+    Twitter.prototype.friends_timeline = function(callback, params) {
+        this._execYql('SELECT * FROM twitter.status.timeline.friends' + where(params), function(r){
+            var tweets = normalize(r.results.statuses.status);
+            callback(tweets);
+        }, params, true);
     }
 
-    Twitter.prototype.user_timeline = function(userName, options, callback) {
-        
-        options = options || {};
-        
-        var since_id = options.since_id || 1;
+    Twitter.prototype.user_timeline = function(user, callback, params) {
+        params = params || {};
+        params.id = user;
+        params.since_id = params.since_id || 1;
 
-        this._execYql('SELECT * FROM twitter.user.timeline WHERE screen_name = @screen_name', function(r){
-            if (callback) callback(r.results.statuses.status)
-        }, {screen_name: userName, since_id: since_id}, true);
+        this._execYql('SELECT * FROM twitter.status.timeline.user' + where(params), function(r){
+            var tweets = normalize(r.results.statuses.status);
+            callback(tweets);
+        }, params, true);
     }
 
     Twitter.prototype.user_mentions = function(callback) {
         this._execYql('SELECT * FROM twitter.status.mentions', function(r){
-            if (callback) callback(r.results.statuses.status)
+            callback(r.results.statuses.status)
         }, {}, true);
     }
 
     Twitter.prototype.user_favorites = function(username, callback) {
         this._execYql('SELECT * FROM twitter.favorites WHERE id=@user', function(r){
-            if (callback) callback(r.results.statuses.status)
+            callback(r.results.statuses.status)
         }, {user:username}, true);
     }
 
     Twitter.prototype.user_lists = function(username, callback) {
         this._execYql('SELECT * FROM twitter.lists WHERE user=@user', function(r){
-            if (callback) callback(r.results.lists_list.lists.list);
+            callback(r.results.lists_list.lists.list);
         }, {user:username}, true);
     }
 
     Twitter.prototype.user_list_subscriptions = function(username, callback) {
         this._execYql('SELECT * FROM twitter.lists.subscriptions WHERE user=@user', function(r){
-            if (callback) callback(r.results.lists_list.lists.list);
+            callback(r.results.lists_list.lists.list);
         }, {user:username}, true);
     }
 
     Twitter.prototype.direct_messages_in = function(callback) {
         this._execYql('SELECT * FROM twitter.directmessages', function(r){
-            if (callback) callback(r.results['direct-messages']['direct_message'])
+            callback(r.results['direct-messages']['direct_message'])
         }, {}, true);
     }
 
     Twitter.prototype.direct_messages_out = function(callback) {
         this._execYql('SELECT * FROM twitter.directmessages.sent', function(r){
-            if (callback) callback(r.results['direct-messages']['direct_message'])
+            callback(r.results['direct-messages']['direct_message'])
         }, {}, true);
     }
 
     Twitter.prototype.followers = function(username, callback) {
         this._execYql('SELECT * FROM twitter.followers WHERE id = @id', function(r){
-            if (callback) callback(r.results.ids.id)
+            callback(r.results.ids.id)
         }, {id:username}, false);
     }
 
     Twitter.prototype.following = function(username, callback) {
         this._execYql('SELECT * FROM twitter.friends WHERE id = @id', function(r){
-            if (callback) callback(r.results.ids.id)
+            callback(r.results.ids.id)
         }, {id:username}, false);
     }
 
@@ -106,7 +137,7 @@ YUI.add("Twitter", function(Y){
         query += where.join(" AND ");
         
         this._execYql(query, function(r){
-            if (callback) callback(r.results.relationship)
+            callback(r.results.relationship)
         }, params, false);
     }
 
@@ -123,7 +154,7 @@ YUI.add("Twitter", function(Y){
         query += where.join(" AND ");
         
         this._execYql(query, function(r){
-            if (callback) callback(r.results.user)
+            callback(r.results.user)
         }, params, false);
     }
 
@@ -133,27 +164,27 @@ YUI.add("Twitter", function(Y){
         var altDatatable = 'USE "http://derek.io/~/yql-tables/twitter/twitter.trends.xml" as twitter.trends;';
 
         this._execYql(altDatatable + 'SELECT * FROM twitter.trends', function(r){
-            if (callback) callback(r.results.trends)
+            callback(r.results.trends)
         }, {}, false);
     }
 
     Twitter.prototype.ratelimit = function(callback) {
         this._execYql('SELECT * FROM twitter.account.ratelimit', function(r){
-            if (callback) callback(r.results.hash)
+            callback(r.results.hash)
         }, {}, true);
     }
     
     Twitter.prototype.update_status = function(status, callback) {
         var altDatatable = 'USE "http://derek.io/~/yql-tables/twitter/twitter.status.xml" as post_twitter_status;';
         this._execYql(altDatatable + 'UPDATE post_twitter_status SET status=@status WHERE ' + this._oauth_to_where(), function(r){
-            if (callback) callback(r.results.hash)
-        }, {status: status}, false);
+            if (callback) callback(r)
+        }, {status: status}, false); // 'false' for authentication, because we are including it in the statement itself
     }
 
 
 // ******* Private
     Twitter.prototype._execYql = function(query, callback, params, authenticated) {
-        
+
         // Defaults
         query         = query         || false;
         callback      = callback      || false;
@@ -171,7 +202,7 @@ YUI.add("Twitter", function(Y){
         
         yqlStatement = set + query;
         
-        //Y.log(yqlStatement);
+        //console.log(yqlStatement);
         
         new Y.YQL(yqlStatement, function(response){
             if(callback) callback(response.query);

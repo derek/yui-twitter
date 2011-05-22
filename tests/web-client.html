@@ -27,8 +27,8 @@
         twitter.following("derek", function(ids){ Y.log("twitter.following: " + ids.length); })
         twitter.followers("derek", function(ids){ Y.log("twitter.followers: " + ids.length); })
         twitter.friends_timeline(function(ids){ Y.log("twitter.friends: " + ids.length); });
-        twitter.user_timeline("derek", {}, function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
-        twitter.user_timeline("derek", {since_id: 69110347386208257}, function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
+        twitter.user_timeline("derek", function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
+        twitter.user_timeline("derek", function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); }, {since_id: 69110347386208257, count:3} );
         twitter.user_mentions(function(tweets){ Y.log("twitter.mentions: " + tweets.length); });
         twitter.user_lists("derek", function(lists){ Y.log("twitter.lists: " + lists.length); });
         twitter.user_list_subscriptions("derek", function(lists){ Y.log("twitter.list_subscriptions: " + lists.length); });
