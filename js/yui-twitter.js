@@ -21,7 +21,13 @@ YUI.add("Twitter", function(Y){
         
         var wheres = [];
         Y.each(params, function(value, key, a){
-            wheres.push(key + "=@" + key);
+            // 'q' is the param for the YQL query, so we cannot pass that into the URL.
+            if (key === "q") {
+                wheres.push(key + "='" + value + "'");
+            }
+            else {
+                wheres.push(key + "=@" + key);   
+            }
         })
         
         if (wheres.length > 0) {
@@ -214,6 +220,8 @@ YUI.add("Twitter", function(Y){
         yqlStatement = set + query;
         
         //console.log(yqlStatement);
+        
+        //delete params.q;
         
         new Y.YQL(yqlStatement, function(response){
             if(callback) callback(response.query);

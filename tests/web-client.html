@@ -10,10 +10,13 @@
             'Twitter': {
                  fullpath: '../js/yui-twitter.js',
                  requires: ['yql'] /* >= YQL_3.4.0  (<3.4.0 had an HTTPS bug) */
+             },
+             'gallery-mustache': {
+                 fullpath: 'https://github.com/derek/yui3-gallery/raw/master/build/gallery-mustache/gallery-mustache.js'
              }
          }
-    }).use('Twitter', function (Y) {
-
+    }).use('Twitter', "gallery-mustache", function (Y) {
+                
         var twitter = new Y.Twitter({
             oauth_token           : 'YOUR VALUE',
             oauth_token_secret    : 'YOUR VALUE',
@@ -37,7 +40,23 @@
         twitter.user_favorites("derek", function(tweets){ Y.log("twitter.user_favorites: " + tweets.length); });
         twitter.ratelimit(function(stats){ Y.log("twitter.ratelimit: " + stats['remaining-hits'].content)});
         twitter.profile("1974", function(user){ Y.log("twitter.profile: " + user.id); });
-
+        
+        /*
+        
+        // Mustache.js example if I need it
+        var template = "{{title}} spends {{calc}}";
+        
+        var view = {
+          title: "Joe",
+          calc: function() {
+            return 2 + 4;
+          }
+        }
+        
+        var m = Y.mustache(template, view);
+        
+        console.log(m);
+        */
     });
     
 </script>
