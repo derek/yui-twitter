@@ -42,7 +42,10 @@ YUI.add("Twitter", function(Y){
     function normalize(tweets) {
         
         //normalize it as an array if YQL only gives us an object back
-        if (!Y.Lang.isArray(tweets)) {
+        if (typeof tweets === "undefined") {
+            tweets = [];
+        }
+        else if (!Y.Lang.isArray(tweets)) {
             tweets = [tweets];
         }
         

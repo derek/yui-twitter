@@ -1,4 +1,5 @@
 <html>
+<div id="timeline"></div>
 <script type="text/javascript" src="../../yui/yui3/build/yui/yui.js"></script>
 <script type="text/javascript">
     
@@ -15,7 +16,7 @@
                  fullpath: 'https://github.com/derek/yui3-gallery/raw/master/build/gallery-mustache/gallery-mustache.js'
              }
          }
-    }).use('Twitter', "gallery-mustache", function (Y) {
+    }).use('node', 'Twitter', "gallery-mustache", "gallery-torelativetime", function (Y) {
                 
         var twitter = new Y.Twitter({
             oauth_token           : 'YOUR VALUE',
@@ -24,39 +25,48 @@
             oauth_consumer_secret : 'YOUR VALUE'
         });
         
-        twitter.trends(function(trends){ Y.log("twitter.trends: " + trends.length); });
-        twitter.friendship("derek", "yuilibrary", function(info){ Y.log("twitter.friendship: " + info.source.screen_name); });
-        twitter.search("#kcroyals", function(tweets){ Y.log("twitter.search: " + tweets.length); });
-        twitter.following("derek", function(ids){ Y.log("twitter.following: " + ids.length); })
-        twitter.followers("derek", function(ids){ Y.log("twitter.followers: " + ids.length); })
-        twitter.friends_timeline(function(ids){ Y.log("twitter.friends: " + ids.length); });
-        twitter.user_timeline("derek", function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
-        twitter.user_timeline("derek", function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); }, {since_id: 69110347386208257, count:3} );
-        twitter.user_mentions(function(tweets){ Y.log("twitter.mentions: " + tweets.length); });
-        twitter.user_lists("derek", function(lists){ Y.log("twitter.lists: " + lists.length); });
-        twitter.user_list_subscriptions("derek", function(lists){ Y.log("twitter.list_subscriptions: " + lists.length); });
-        twitter.direct_messages_in(function(tweets){ Y.log("twitter.direct_messages_in: " + tweets.length); });
-        twitter.direct_messages_out(function(tweets){ Y.log("twitter.direct_messages_out: " + tweets.length); });
-        twitter.user_favorites("derek", function(tweets){ Y.log("twitter.user_favorites: " + tweets.length); });
-        twitter.ratelimit(function(stats){ Y.log("twitter.ratelimit: " + stats['remaining-hits'].content)});
-        twitter.profile("1974", function(user){ Y.log("twitter.profile: " + user.id); });
         
-        /*
+        var updater = getUpdater();
+        setInterval( updater, 30000);
+        updater();
         
-        // Mustache.js example if I need it
-        var template = "{{title}} spends {{calc}}";
+        setInterval( function(){
+            console.log("updating...");
+            Y.all(".timeAgo").each(function(x){
+               x.set('innerHTML', Y.toRelativeTime( new Date(parseInt(x.getAttribute('x-timestamp'), 10))));
+            });
+        }, 60000);
         
-        var view = {
-          title: "Joe",
-          calc: function() {
-            return 2 + 4;
-          }
+        function getUpdater(){
+            
+            var highest_tweet_id = 1;
+            
+            return function() {
+                twitter.friends_timeline(function(tweets){
+                    
+                    tweets.reverse();
+                
+                    Y.each(tweets, function (tweet) {
+                        
+                        if (highest_tweet_id < tweet.id)
+                            highest_tweet_id = tweet.id;
+                            
+                            var view = {
+                                profile_img:   tweet.user.profile_image_url,
+                                timestamp:     Date.parse(tweet.created_at),
+                                relativeTime:  Y.toRelativeTime(new Date(Date.parse(tweet.created_at))),
+                                tweet:         tweet.text,
+                                tweet_id:      tweet.id,
+                                user:          tweet.user.screen_name
+                            };
+
+                        if (!document.getElementById("tweet-"+tweet.id)) {
+                            Y.one("#timeline").prepend( Y.mustache("<div id='tweet-{{tweet_id}}'><img height='48' src='{{profile_img}}'}> {{user}}" + ": {{tweet}} " + "<span class='timeAgo' x-timestamp='{{timestamp}}'>{{relativeTime}}</span></div>", view) );
+                        }
+                    });
+                }, {count: 100, since_id: highest_tweet_id});
+            }
         }
-        
-        var m = Y.mustache(template, view);
-        
-        console.log(m);
-        */
     });
     
 </script>
