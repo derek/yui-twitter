@@ -1,6 +1,6 @@
 <html>
 <div id="timeline"></div>
-<script type="text/javascript" src="../../yui/yui3/build/yui/yui.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script>
 <script type="text/javascript">
     
     YUI({
@@ -10,14 +10,18 @@
         modules: {
             'Twitter': {
                  fullpath: '../js/yui-twitter.js',
-                 requires: ['yql'] /* >= YQL_3.4.0  (<3.4.0 had an HTTPS bug) */
+                 requires: ['yql'] 
+             },
+            'yql': {
+                 fullpath: '../js/yql.js', /* Is a patched version as yql@3.3.0 had an HTTPS bug) */
+                 requires: ['jsonp', 'jsonp-url']
              },
              'gallery-mustache': {
                  fullpath: 'https://github.com/derek/yui3-gallery/raw/master/build/gallery-mustache/gallery-mustache.js'
              }
          }
     }).use('node', 'Twitter', "gallery-mustache", "gallery-torelativetime", function (Y) {
-                
+
         var twitter = new Y.Twitter({
             oauth_token           : 'YOUR VALUE',
             oauth_token_secret    : 'YOUR VALUE',
@@ -25,13 +29,11 @@
             oauth_consumer_secret : 'YOUR VALUE'
         });
         
-        
         var updater = getUpdater();
         setInterval( updater, 30000);
         updater();
         
         setInterval( function(){
-            console.log("updating...");
             Y.all(".timeAgo").each(function(x){
                x.set('innerHTML', Y.toRelativeTime( new Date(parseInt(x.getAttribute('x-timestamp'), 10))));
             });
@@ -48,17 +50,16 @@
                 
                     Y.each(tweets, function (tweet) {
                         
-                        if (highest_tweet_id < tweet.id)
-                            highest_tweet_id = tweet.id;
+                        if (highest_tweet_id < tweet.id) highest_tweet_id = tweet.id;
                             
-                            var view = {
-                                profile_img:   tweet.user.profile_image_url,
-                                timestamp:     Date.parse(tweet.created_at),
-                                relativeTime:  Y.toRelativeTime(new Date(Date.parse(tweet.created_at))),
-                                tweet:         tweet.text,
-                                tweet_id:      tweet.id,
-                                user:          tweet.user.screen_name
-                            };
+                        var view = {
+                            profile_img:   tweet.user.profile_image_url,
+                            timestamp:     Date.parse(tweet.created_at),
+                            relativeTime:  Y.toRelativeTime(new Date(Date.parse(tweet.created_at))),
+                            tweet:         tweet.text,
+                            tweet_id:      tweet.id,
+                            user:          tweet.user.screen_name
+                        };
 
                         if (!document.getElementById("tweet-"+tweet.id)) {
                             Y.one("#timeline").prepend( Y.mustache("<div id='tweet-{{tweet_id}}'><img height='48' src='{{profile_img}}'}> {{user}}" + ": {{tweet}} " + "<span class='timeAgo' x-timestamp='{{timestamp}}'>{{relativeTime}}</span></div>", view) );
