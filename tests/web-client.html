@@ -5,22 +5,22 @@
     
     YUI({
         combine: false,
-        debug:   true,
-        filter:  "raw",
+        debug: true,
+        filter: "raw",
         modules: {
             'Twitter': {
-                 fullpath: '../js/yui-twitter.js',
-                 requires: ['yql'] 
-             },
+                fullpath: '../js/yui-twitter.js',
+                requires: ['yql']
+            },
             'yql': {
-                 fullpath: '../js/yql.js', /* Is a patched version as yql@3.3.0 had an HTTPS bug) */
-                 requires: ['jsonp', 'jsonp-url']
-             },
-             'gallery-mustache': {
-                 fullpath: 'https://github.com/derek/yui3-gallery/raw/master/build/gallery-mustache/gallery-mustache.js'
-             }
-         }
-    }).use('node', 'Twitter', "gallery-mustache", "gallery-torelativetime", function (Y) {
+                fullpath: 'https://github.com/derek/yui-twitter/raw/master/js/yql.js', /* Is a patched version as yql@3.3.0 had an HTTPS bug) */
+                requires: ['jsonp-url']
+            },
+            'gallery-mustache': {
+                fullpath: 'https://github.com/derek/yui3-gallery/raw/master/build/gallery-mustache/gallery-mustache.js'
+            }
+        }
+    }).use('node', 'Twitter', "gallery-mustache", "gallery-torelativetime", function(Y) {
 
         var twitter = new Y.Twitter({
             oauth_token           : 'YOUR VALUE',
