@@ -9,15 +9,15 @@
         filter: "raw",
         modules: {
             'Twitter': {
-                fullpath: '../js/yui-twitter.js',
+                fullpath: '../js/twitter.js',
                 requires: ['yql']
             },
             'yql': {
-                fullpath: 'https://github.com/derek/yui-twitter/raw/master/js/yql.js', /* Is a patched version as yql@3.3.0 had an HTTPS bug) */
+                fullpath: 'https://github.com/derek/yui-twitter/raw/792ea51d85c0a42085c66d8e0d274c43ab191a0d/js/yql.js', /* Is a patched version as yql@3.3.0 had an HTTPS bug) */
                 requires: ['jsonp-url']
             },
             'gallery-mustache': {
-                fullpath: 'https://github.com/derek/yui3-gallery/raw/master/build/gallery-mustache/gallery-mustache.js'
+                fullpath: 'https://github.com/derek/yui3-gallery/raw/6e23fba44a2313538f78d5107c06b3fe54b9becd/build/gallery-mustache/gallery-mustache.js'
             }
         }
     }).use('node', 'Twitter', "gallery-mustache", "gallery-torelativetime", function(Y) {
