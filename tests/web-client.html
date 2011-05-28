@@ -13,14 +13,11 @@
                 requires: ['yql']
             },
             'yql': {
-                fullpath: 'https://github.com/derek/yui-twitter/raw/792ea51d85c0a42085c66d8e0d274c43ab191a0d/js/yql.js', /* Is a patched version as yql@3.3.0 had an HTTPS bug) */
+                fullpath: 'https://github.com/derek/yui-twitter/raw/792ea51d85c0a42085c66d8e0d274c43ab191a0d/js/yql.js', /* Is a patched version because yql@3.3.0 had an HTTPS bug) */
                 requires: ['jsonp-url']
-            },
-            'gallery-mustache': {
-                fullpath: 'https://github.com/derek/yui3-gallery/raw/6e23fba44a2313538f78d5107c06b3fe54b9becd/build/gallery-mustache/gallery-mustache.js'
             }
         }
-    }).use('node', 'Twitter', "gallery-mustache", "gallery-torelativetime", function(Y) {
+    }).use('node', 'Twitter', 'substitute', 'gallery-torelativetime', function(Y) {
 
         var twitter = new Y.Twitter({
             oauth_token           : 'YOUR VALUE',
@@ -62,7 +59,7 @@
                         };
 
                         if (!document.getElementById("tweet-"+tweet.id)) {
-                            Y.one("#timeline").prepend( Y.mustache("<div id='tweet-{{tweet_id}}'><img height='48' src='{{profile_img}}'}> {{user}}" + ": {{tweet}} " + "<span class='timeAgo' x-timestamp='{{timestamp}}'>{{relativeTime}}</span></div>", view) );
+                            Y.one("#timeline").prepend( Y.substitute("<div id='tweet-{tweet_id}'><img height='48' src='{profile_img}'}> {user}" + ": {tweet} " + "<span class='timeAgo' x-timestamp='{timestamp}'>{relativeTime}</span></div>", view) );
                         }
                     });
                 }, {count: 100, since_id: highest_tweet_id});
