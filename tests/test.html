@@ -1,65 +1,56 @@
+<!DOCTYPE html>
 <html>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script>
-<script type="text/javascript">
-    
-    YUI({
-        combine: false,
-        debug: true,
-        filter: "raw",
-        modules: {
-            'Twitter': {
-                fullpath: '../js/twitter.js',
-                requires: ['yql']
-            },
-            'yql': {
-                fullpath: 'https://github.com/derek/yui-twitter/raw/792ea51d85c0a42085c66d8e0d274c43ab191a0d/js/yql.js', /* Is a patched version as yql@3.3.0 had an HTTPS bug) */
-                requires: ['jsonp-url']
-            }
-        }
-    }).use('node', 'Twitter', function(Y) {
 
-        var twitter = new Y.Twitter({
-            oauth_token           : 'YOUR VALUE',
-            oauth_token_secret    : 'YOUR VALUE',
-            oauth_consumer_key    : 'YOUR VALUE',
-            oauth_consumer_secret : 'YOUR VALUE'
-        });
-        
-        twitter.trends(function(trends){ Y.log("twitter.trends: " + trends.length); });
-        twitter.friendship("derek", "yuilibrary", function(info){ Y.log("twitter.friendship: " + info.source.screen_name); });
-        twitter.search("#kcroyals", function(tweets){ Y.log("twitter.search: " + tweets.length); });
-        twitter.following("derek", function(ids){ Y.log("twitter.following: " + ids.length); })
-        twitter.followers("derek", function(ids){ Y.log("twitter.followers: " + ids.length); })
-        twitter.friends_timeline(function(ids){ Y.log("twitter.friends: " + ids.length); });
-        twitter.user_timeline("derek", function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
-        twitter.user_timeline("derek", function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); }, {since_id: 69110347386208257, count:3} );
-        twitter.user_mentions(function(tweets){ Y.log("twitter.mentions: " + tweets.length); });
-        twitter.user_lists("derek", function(lists){ Y.log("twitter.lists: " + lists.length); });
-        twitter.user_list_subscriptions("derek", function(lists){ Y.log("twitter.list_subscriptions: " + lists.length); });
-        twitter.direct_messages_in(function(tweets){ Y.log("twitter.direct_messages_in: " + tweets.length); });
-        twitter.direct_messages_out(function(tweets){ Y.log("twitter.direct_messages_out: " + tweets.length); });
-        twitter.user_favorites("derek", function(tweets){ Y.log("twitter.user_favorites: " + tweets.length); });
-        twitter.ratelimit(function(stats){ Y.log("twitter.ratelimit: " + stats['remaining-hits'].content)});
-        twitter.profile("1974", function(user){ Y.log("twitter.profile: " + user.id); });
-        
-        /*
-        
-        // Mustache.js example if I need it
-        var template = "{{title}} spends {{calc}}";
-        
-        var view = {
-          title: "Joe",
-          calc: function() {
-            return 2 + 4;
-          }
-        }
-        
-        var m = Y.mustache(template, view);
-        
-        console.log(m);
-        */
-    });
+  <div class="yui3-skin-sam" id="yconsole"></div>
+
+  <script type="text/javascript" src="http://yui.yahooapis.com/3.4.0pr3/build/yui/yui.js"></script>
+  <script type="text/javascript">
     
-</script>
+      YUI({
+          combine: false,
+          debug: true,
+          filter: "raw",
+          modules: {
+              'gellery-twitter': {
+                  fullpath: '../js/gallery-twitter.js',
+                  requires: ['yql']
+              }
+          }
+      }).use('node', 'gellery-twitter', 'console', function(Y) {
+      
+          new Y.Console({
+              logSource: Y.Global,
+              style: 'block',
+              newestOnTop: false,
+              width: "100%",
+              height: "600px"
+          }).render( "#yconsole" );
+
+          var twitter = new Y.Twitter({
+              oauth_token           : 'YOUR VALUE',
+              oauth_token_secret    : 'YOUR VALUE',
+              oauth_consumer_key    : 'YOUR VALUE',
+              oauth_consumer_secret : 'YOUR VALUE'
+          });
+        
+          twitter.trends(function(trends){ Y.log("twitter.trends: " + trends.length); });
+          twitter.friendship("derek", "yuilibrary", function(info){ Y.log("twitter.friendship: " + info.source.screen_name); });
+          twitter.search("#kcroyals", function(tweets){ Y.log("twitter.search: " + tweets.length); });
+          twitter.following("derek", function(ids){ Y.log("twitter.following: " + ids.length); })
+          twitter.followers("derek", function(ids){ Y.log("twitter.followers: " + ids.length); })
+          twitter.friends_timeline(function(ids){ Y.log("twitter.friends: " + ids.length); });
+          twitter.user_timeline("derek", function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); });
+          twitter.user_timeline("derek", function(tweets){ Y.log("twitter.user_timeline: " + tweets.length); }, {since_id: 69110347386208257, count:3} );
+          twitter.user_mentions(function(tweets){ Y.log("twitter.mentions: " + tweets.length); });
+          twitter.user_lists("derek", function(lists){ Y.log("twitter.lists: " + lists.length); });
+          twitter.user_list_subscriptions("derek", function(lists){ Y.log("twitter.list_subscriptions: " + lists.length); });
+          twitter.direct_messages_in(function(tweets){ Y.log("twitter.direct_messages_in: " + tweets.length); });
+          twitter.direct_messages_out(function(tweets){ Y.log("twitter.direct_messages_out: " + tweets.length); });
+          twitter.user_favorites("derek", function(tweets){ Y.log("twitter.user_favorites: " + tweets.length); });
+          twitter.ratelimit(function(stats){ Y.log("twitter.ratelimit: " + stats['remaining-hits'].content)});
+          twitter.profile("1974", function(user){ Y.log("twitter.profile: " + user.id); });
+      });
+    
+  </script>
 
 </html>

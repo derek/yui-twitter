@@ -6,15 +6,12 @@ YUI({
     debug:   true,
     filter:  "raw",
     modules: {
-        'Twitter': {
+        'gellery-twitter': {
             fullpath: '../js/yui-twitter.js',
             requires: ['yql'] /* >= YQL_3.4.0  (<3.4.0 had an HTTPS bug) */
-         },
-        'gallery-mustache': {
-            fullpath: 'https://github.com/derek/yui3-gallery/raw/master/build/gallery-mustache/gallery-mustache.js'
-        }
+         }
     }
-}).use('Twitter', "gallery-mustache", function (Y) {
+}).use('gellery-twitter', "substitute", function (Y) {
 
     var twitter = new Y.Twitter({
         oauth_token           : 'YOUR VALUE',

@@ -1,6 +1,6 @@
 <html>
 <div id="timeline"></div>
-<script type="text/javascript" src="http://yui.yahooapis.com/3.3.0/build/yui/yui.js"></script>
+<script type="text/javascript" src="http://yui.yahooapis.com/3.4.0pr3/build/yui/yui.js"></script>
 <script type="text/javascript">
     
     YUI({
@@ -8,16 +8,12 @@
         debug: true,
         filter: "raw",
         modules: {
-            'Twitter': {
-                fullpath: '../js/twitter.js',
+            'gellery-twitter': {
+                fullpath: '../js/gallery-twitter.js',
                 requires: ['yql']
-            },
-            'yql': {
-                fullpath: 'https://github.com/derek/yui-twitter/raw/792ea51d85c0a42085c66d8e0d274c43ab191a0d/js/yql.js', /* Is a patched version because yql@3.3.0 had an HTTPS bug) */
-                requires: ['jsonp-url']
             }
         }
-    }).use('node', 'Twitter', 'substitute', 'gallery-torelativetime', function(Y) {
+    }).use('node', 'gellery-twitter', 'substitute', 'gallery-torelativetime', function(Y) {
 
         var twitter = new Y.Twitter({
             oauth_token           : 'YOUR VALUE',
