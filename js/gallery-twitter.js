@@ -1,4 +1,4 @@
-YUI.add("gellery-twitter", function(Y){
+YUI.add("gallery-twitter", function(Y){
     
     var Twitter = function(config){
         config = config || false;
@@ -185,9 +185,9 @@ YUI.add("gellery-twitter", function(Y){
     Twitter.prototype.trends = function(callback, where) {
         
         // Current twitter.trends.xml table does not function properly. Patch submitted.  In the meantime...
-        var altDatatable = 'USE "https://github.com/derek/yui-twitter/raw/master/datatables/twitter.trends.xml" as twitter.trends;';
+        var altDatatable = 'USE "https://raw.github.com/derek/yql-tables/aca55389847d80893347bdd8b2bbf165f6cc58ae/twitter/twitter.trends.xml" as twitter.trends;';
 
-        this._execYql('SELECT * FROM twitter.trends' + whereString(where), function(r){
+        this._execYql(altDatatable + 'SELECT * FROM twitter.trends' + whereString(where), function(r){
             callback(r.results.trends);
         }, {}, false);
     }
@@ -249,4 +249,4 @@ YUI.add("gellery-twitter", function(Y){
         return new Twitter(config);
     };
 
-});
+}, '0.0.1', {requires:['yql']});
