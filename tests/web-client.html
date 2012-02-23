@@ -3,11 +3,10 @@
 
     <div id="timeline"></div>
     
-    <script type="text/javascript" src="http://yui.yahooapis.com/3.4.1/build/yui/yui.js"></script>
+    <script type="text/javascript" src="http://yui.yahooapis.com/3.5.0pr2/build/yui/yui.js"></script>
     <script type="text/javascript">
     
         YUI({
-            combine: true,
             debug: true,
             filter: "raw",
             modules: {
@@ -19,32 +18,31 @@
                     fullpath: 'derek-oauth-tokens.js'
                  }
             }
-        }).use('node', 'gallery-twitter', 'substitute', 'gallery-torelativetime', function(Y) {
-
-            var twitter = new Y.Twitter(Y.derekOAuthTokens);
-        
-            var updater = getUpdater();
-            setInterval( updater, 30000);
-            updater();
-        
-            setInterval( function(){
-                Y.all(".timeAgo").each(function(x){
-                   x.set('innerHTML', Y.toRelativeTime( new Date(parseInt(x.getAttribute('x-timestamp'), 10))));
+        }).use('node', 'base', 'gallery-twitter', 'substitute', 'gallery-torelativetime', function(Y) {
+            var twitter, updater;
+            
+            Twitter = new Y.Twitter(Y.derekOAuthTokens);
+            
+            function updateTimes(){
+                Y.all(".timeAgo").each(function(node){
+                   node.setContent(Y.toRelativeTime( new Date(parseInt(node.getAttribute('x-timestamp'), 10))));
                 });
-            }, 60000);
-        
+            }
+            
             function getUpdater(){
-            
-                var highest_tweet_id = 1;
-            
-                return function() {
-                    twitter.friends_timeline(function(tweets){
-                    
-                        tweets.reverse();
                 
-                        Y.each(tweets, function (tweet) {
+                var highest_tweet_id = 1;
+                
+                return function() {
+                    Twitter.friends_timeline(function(tweets){
                         
-                            if (highest_tweet_id < tweet.id) highest_tweet_id = tweet.id;
+                        tweets.reverse();
+                        
+                        Y.each(tweets, function (tweet) {
+                            
+                            if (highest_tweet_id < tweet.id) {
+                                highest_tweet_id = tweet.id;
+                            }
                             
                             var view = {
                                 profile_img:   tweet.user.profile_image_url,
@@ -54,16 +52,23 @@
                                 tweet_id:      tweet.id,
                                 user:          tweet.user.screen_name
                             };
-
-                            if (!document.getElementById("tweet-"+tweet.id)) {
+                            
+                            if (Y.one("#tweet-"+tweet.id) === null) {
                                 Y.one("#timeline").prepend( Y.substitute("<div id='tweet-{tweet_id}'><img height='48' src='{profile_img}'}> {user}" + ": {tweet} " + "<span class='timeAgo' x-timestamp='{timestamp}'>{relativeTime}</span></div>", view) );
                             }
+                            
                         });
                     }, {count: 100, since_id: highest_tweet_id});
                 }
             }
+            
+            updater = getUpdater();
+            setInterval(updater, 30000);
+            updater();
+            
+            setInterval(updateTimes, 60000);
         });
-
+        
     </script>
 
 </html>
